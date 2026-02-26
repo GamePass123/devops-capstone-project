@@ -12,7 +12,6 @@ from tests.factories import AccountFactory
 from service.common import status  # HTTP Status Codes
 from service.models import db, Account, init_db
 from service.routes import app
-from flask_talisman import Talisman
 from service import talisman
 
 DATABASE_URI = os.getenv(
@@ -25,6 +24,8 @@ HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 #  T E S T   C A S E S
 ######################################################################
 class TestAccountService(TestCase):
+
+
     """Account Service Tests"""
 
     @classmethod
@@ -147,7 +148,7 @@ class TestAccountService(TestCase):
         resp = self.client.get(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(len(data), 5)
+        self.assertEqual(len(data),5)
     
     def test_update_account(self):
         """It should Update an existing Account"""
@@ -161,23 +162,23 @@ class TestAccountService(TestCase):
         resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         updated_account = resp.get_json()
-        self.assertEqual(updated_account["name"], "Something Known")
+        self.assertEqual(updated_account["name"],"Something Known")
     
     def test_delete_account(self):
         """It should Delete Account"""
         account = self._create_accounts(1)[0]
         resp = self.client.delete(f"{BASE_URL}/{account.id}")
-        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(resp.status_code,status.HTTP_204_NO_CONTENT)
     
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
         resp = self.client.delete(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(resp.status_code,status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_security_headers(self):
         """It should return security headers"""
         response = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
         headers = {
             'X-Frame-Options': 'SAMEORIGIN',
             'X-Content-Type-Options': 'nosniff',
@@ -185,6 +186,4 @@ class TestAccountService(TestCase):
             'Referrer-Policy': 'strict-origin-when-cross-origin'
         }
         for key, value in headers.items():
-            self.assertEqual(response.headers.get(key), value)
-
-    
+            self.assertEqual(response.headers.get(key),value)
